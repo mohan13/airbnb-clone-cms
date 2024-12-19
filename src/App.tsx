@@ -17,6 +17,8 @@ import Alerts from './pages/UiElements/Alerts';
 import Buttons from './pages/UiElements/Buttons';
 import DefaultLayout from './layout/DefaultLayout';
 import { ProtectedRoute } from './layout/ProtectedRoute';
+import { AddRooms } from './pages/Room/Add-Rooms';
+import { EditRooms } from './pages/Room/Edit-Rooms';
 
 const routes = [
   {
@@ -86,7 +88,6 @@ function App() {
             </>
           }
         />
-
         <Route
           path="/profile"
           element={
@@ -99,23 +100,23 @@ function App() {
           }
         />
         <Route
-          path="/forms/form-elements"
+          path="/room/add-rooms"
           element={
             <>
               <PageTitle title="Form Elements | TailAdmin - Tailwind CSS Admin Dashboard Template" />
               <ProtectedRoute>
-                <Profile />
+                <AddRooms />
               </ProtectedRoute>
             </>
           }
-        />
+        />{' '}
         <Route
-          path="/forms/form-layout"
+          path="/room/edit-room"
           element={
             <>
-              <PageTitle title="Form Layout | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <PageTitle title="Form Elements | TailAdmin - Tailwind CSS Admin Dashboard Template" />
               <ProtectedRoute>
-                <FormLayout />
+                <EditRooms />
               </ProtectedRoute>
             </>
           }

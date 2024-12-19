@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 export const ProtectedRoute = ({ children }: PropsWithChildren) => {
   const navigate = useNavigate();
   const token = window.localStorage.getItem('token');
-  const [loader, setLoader] = useState(true);
+  const [loader, setLoader] = useState(false);
   useEffect(() => {
     if (token) {
       setLoader(false);
@@ -17,5 +17,5 @@ export const ProtectedRoute = ({ children }: PropsWithChildren) => {
       navigate('/auth/signin');
     }
   }, [token]);
-  return !loader ? 'loading' : <>{children}</>;
+  return loader ? 'loading' : <>{children}</>;
 };
