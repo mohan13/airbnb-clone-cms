@@ -20,12 +20,16 @@ const SignIn: React.FC = () => {
     try {
       const response = await axiosInstance.post('/users/login', data);
       if (response.status == 200) {
-        localStorage.setItem('token', response.data.data.token);
-        toast.success('Loggedin Successfully!');
-        navigate('/', {
-          replace: true,
-        });
-        reset();
+        if (response.data.data.user.role == 'admin') {
+          localStorage.setItem('token', response.data.data.token);
+          toast.success('Loggedin Successfully!');
+          navigate('/', {
+            replace: true,
+          });
+          reset();
+        } else {
+          toast.error('You must be a admin to login !');
+        }
       }
     } catch (error: any) {
       toast.error('Oops! Invalid Credentials');
