@@ -111,7 +111,7 @@ function App() {
           }
         />{' '}
         <Route
-          path="/room/edit-room"
+          path="/room/edit-room/:id"
           element={
             <>
               <PageTitle title="Form Elements | TailAdmin - Tailwind CSS Admin Dashboard Template" />
