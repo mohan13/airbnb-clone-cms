@@ -106,12 +106,15 @@ import { Input } from '../Input';
 import { MoonLoader } from 'react-spinners';
 import { submitPost, updatePost } from '../../../action/crud-action';
 import { Rooms } from '../../../types/room';
+import { useState } from 'react';
 
 type RoomFormProps = {
   currentData?: Rooms;
 };
 
 export const PostRooms = ({ currentData }: RoomFormProps) => {
+  const [isChecked, setIsChecked] = useState<boolean>(false);
+
   const {
     register,
     handleSubmit,
@@ -127,6 +130,7 @@ export const PostRooms = ({ currentData }: RoomFormProps) => {
           currency: currentData.currency,
           location: { ...currentData.location },
           amenities: currentData.amenities,
+          availability: { ...currentData.availability },
         }
       : {},
   });
@@ -149,6 +153,15 @@ export const PostRooms = ({ currentData }: RoomFormProps) => {
         city: data.location.city,
         state: data.location.state,
         country: data.location.country,
+      }),
+    );
+
+    formData.append(
+      'availability',
+      JSON.stringify({
+        start_date: data.availability.start_date,
+        end_date: data.availability.end_date,
+        is_available: data.availability.is_available,
       }),
     );
 
@@ -186,7 +199,7 @@ export const PostRooms = ({ currentData }: RoomFormProps) => {
         defaultValue={currentData ? currentData.roomDescription : undefined}
         {...register('roomDescription', { required: true })}
         placeholder="Description"
-        className="col-span-4"
+        className="w-full col-span-4 rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
       />
       <div className="col-span-2">
         <Input
@@ -237,7 +250,29 @@ export const PostRooms = ({ currentData }: RoomFormProps) => {
         placeholder="Country"
       />
 
-      <h3>Amenities</h3>
+      <h3 className="col-span-4">Availability</h3>
+
+      <Input
+        label="Start Date"
+        type="date"
+        {...register('availability.start_date', { required: true })}
+        placeholder="Address"
+      />
+      <Input
+        label="End Date"
+        type="date"
+        {...register('availability.end_date', { required: true })}
+        placeholder="City"
+      />
+
+      <Input
+        label="Is Available"
+        type="checkbox"
+        {...register('availability.is_available', { required: true })}
+        placeholder="State"
+      />
+
+      <h3 className="col-span-4">Amenities</h3>
       <select
         className="col-span-4 grid grid-cols-3 "
         defaultValue={currentData ? currentData.amenities : undefined}
