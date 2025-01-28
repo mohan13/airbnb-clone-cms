@@ -106,7 +106,7 @@ import { Input } from '../Input';
 import { MoonLoader } from 'react-spinners';
 import { submitPost, updatePost } from '../../../action/crud-action';
 import { Rooms } from '../../../types/room';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 
 type RoomFormProps = {
   currentData?: Rooms;
@@ -114,6 +114,22 @@ type RoomFormProps = {
 
 export const PostRooms = ({ currentData }: RoomFormProps) => {
   const [isChecked, setIsChecked] = useState<boolean>(false);
+  const [image, setImage] = useState(currentData?.roomImages || []);
+
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const imageArray = Array.from(e.target.files).map((file) =>
+        URL.createObjectURL(file),
+      );
+      setImage(imageArray);
+    }
+  };
+
+  const removeImage = (index: any) => {
+    const updatedFiles = [...image];
+    updatedFiles.splice(index, 1);
+    setImage(updatedFiles);
+  };
 
   const {
     register,
@@ -285,14 +301,53 @@ export const PostRooms = ({ currentData }: RoomFormProps) => {
         <option value="Parking">Parking</option>
       </select>
 
-      <div>
+      {/* <div>
         <h3>Images</h3>
         <input
           type="file"
           {...register('roomImages', { required: true })}
           multiple
+          onChange={handleImageChange}
           accept="image/*"
         />
+      </div> */}
+      <div className="mt-8 flex w-full flex-col justify-start gap-2">
+        <h3 className="font-poppins font-semibold lg:text-xl">
+          Add Gallery image
+        </h3>
+        <input
+          type="file"
+          {...register('roomImages', { required: true })}
+          multiple
+          // hidden
+          onChange={handleImageChange}
+          accept="image/*"
+        />
+      </div>
+      <div className="mt-4 flex w-full items-center justify-center space-x-6 border-dashed border-[#e0d8ff99]">
+        {image.map((item, index) => (
+          <div className="relative w-1/4" key={index}>
+            {item && (
+              <img
+                src={`http://localhost:4000/images/${item}`}
+                alt={`Gallery ${index + 1}`}
+                className="absolute left-0 top-0 h-full w-full object-cover"
+              />
+            )}
+            <button
+              onClick={() => removeImage(index)}
+              className="absolute cursor-pointer text-red-500"
+            >
+              X
+            </button>
+            <label
+              htmlFor={`newGalleryImages${index}`}
+              className="flex h-32 w-full cursor-pointer items-center justify-center bg-cover bg-[top_2rem] bg-no-repeat font-poppins font-semibold tracking-tight text-[#0000008c] lg:text-base"
+            >
+              Image {index + 1}
+            </label>
+          </div>
+        ))}
       </div>
 
       <button

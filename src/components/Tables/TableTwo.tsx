@@ -85,7 +85,10 @@ const TableTwo = () => {
               <div className="col-span-2 flex items-center">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                   <div className="h-12.5 w-15 rounded-md">
-                    <img src={room.roomImages[0]} alt={room.title} />
+                    <img
+                      src={`http://localhost:4000/images/${room.roomImages[0]}`}
+                      alt={room.title}
+                    />
                   </div>
                   <p className="text-sm text-black dark:text-white">
                     {room.title}
