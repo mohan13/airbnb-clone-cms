@@ -6,6 +6,9 @@ import ProductFour from '../../images/product/product-04.png';
 import { useFetch } from '../../hooks/useFetch';
 import { FaEdit } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import axiosInstance from '../../config/axios';
+import { queryClient } from '../../main';
+import toast from 'react-hot-toast';
 
 const productData: Product[] = [
   {
@@ -44,6 +47,15 @@ const productData: Product[] = [
 
 const TableTwo = () => {
   const { data, isPending } = useFetch('/rooms');
+
+  const handleDelete = async (id: string) => {
+    const res = await axiosInstance.delete(`/rooms/${id}`);
+    if (res.status === 200) {
+      toast.success('Room deleted successfully!');
+      queryClient.invalidateQueries();
+      return res.data;
+    }
+  };
   return (
     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="py-6 px-4 md:px-6 xl:px-7.5">
@@ -138,7 +150,10 @@ const TableTwo = () => {
                       />
                     </svg>
                   </button>
-                  <button className="hover:text-primary">
+                  <button
+                    className="hover:text-red-400"
+                    onClick={() => handleDelete(room.id)}
+                  >
                     <svg
                       className="fill-current"
                       width="18"

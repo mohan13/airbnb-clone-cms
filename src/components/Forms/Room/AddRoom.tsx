@@ -114,27 +114,17 @@ type RoomFormProps = {
 
 export const PostRooms = ({ currentData }: RoomFormProps) => {
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  const [image, setImage] = useState(currentData?.roomImages || []);
-
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const imageArray = Array.from(e.target.files).map((file) =>
-        URL.createObjectURL(file),
-      );
-      setImage(imageArray);
-    }
-  };
-
-  const removeImage = (index: any) => {
-    const updatedFiles = [...image];
-    updatedFiles.splice(index, 1);
-    setImage(updatedFiles);
-  };
+  const [previewImages, setPreviewImages] = useState<string[]>(
+    currentData?.roomImages.map((img) =>
+      typeof img === 'string' ? img : URL.createObjectURL(img),
+    ) || [],
+  );
 
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { isSubmitting },
   } = useForm<Rooms>({
     defaultValues: currentData
@@ -150,6 +140,19 @@ export const PostRooms = ({ currentData }: RoomFormProps) => {
         }
       : {},
   });
+
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const newImages = files.map((file) => URL.createObjectURL(file));
+    setPreviewImages((prev) => [...prev, ...newImages]);
+    setValue('roomImages', [...previewImages, ...files]);
+  };
+
+  const removeImage = (index: number) => {
+    const updatedImages = previewImages.filter((_, i) => i !== index);
+    setPreviewImages(updatedImages);
+    setValue('roomImages', updatedImages);
+  };
 
   const onSubmit = async (data: Rooms) => {
     // Prepare data to mimic Postman form-data
@@ -311,7 +314,7 @@ export const PostRooms = ({ currentData }: RoomFormProps) => {
           accept="image/*"
         />
       </div> */}
-      <div className="mt-8 flex w-full flex-col justify-start gap-2">
+      {/* <div className="mt-8 flex w-full flex-col justify-start gap-2">
         <h3 className="font-poppins font-semibold lg:text-xl">
           Add Gallery image
         </h3>
@@ -323,31 +326,43 @@ export const PostRooms = ({ currentData }: RoomFormProps) => {
           onChange={handleImageChange}
           accept="image/*"
         />
-      </div>
-      <div className="mt-4 flex w-full items-center justify-center space-x-6 border-dashed border-[#e0d8ff99]">
-        {image.map((item, index) => (
-          <div className="relative w-1/4" key={index}>
-            {item && (
+      </div> */}
+      <div>
+        <label>Images</label>
+        <input type="file" multiple onChange={handleImageChange} />
+
+        {/* Image Preview */}
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '10px',
+            marginTop: '10px',
+          }}
+        >
+          {previewImages.map((image, index) => (
+            <div key={index} style={{ position: 'relative' }}>
               <img
-                src={`http://localhost:4000/images/${item}`}
-                alt={`Gallery ${index + 1}`}
-                className="absolute left-0 top-0 h-full w-full object-cover"
+                src={image}
+                alt={`preview-${index}`}
+                style={{ width: '100px', height: '100px' }}
               />
-            )}
-            <button
-              onClick={() => removeImage(index)}
-              className="absolute cursor-pointer text-red-500"
-            >
-              X
-            </button>
-            <label
-              htmlFor={`newGalleryImages${index}`}
-              className="flex h-32 w-full cursor-pointer items-center justify-center bg-cover bg-[top_2rem] bg-no-repeat font-poppins font-semibold tracking-tight text-[#0000008c] lg:text-base"
-            >
-              Image {index + 1}
-            </label>
-          </div>
-        ))}
+              <button
+                type="button"
+                onClick={() => removeImage(index)}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  right: 0,
+                  background: 'red',
+                  color: 'white',
+                }}
+              >
+                X
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
 
       <button
